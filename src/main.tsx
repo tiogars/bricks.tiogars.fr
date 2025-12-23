@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     ],
   },
 ], {
-  basename: '/noob-bricks',
+  basename: import.meta.env.BASE_URL,
 });
 
 createRoot(document.getElementById('root')!).render(

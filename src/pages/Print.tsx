@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PrintView } from '../components/PrintView';
 import type { Brick } from '../types';
@@ -13,14 +14,20 @@ export function Print() {
   const state = location.state as LocationState;
 
   // If no state is passed, redirect to home
-  if (!state || !state.bricks) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (!state || !state.bricks) {
+      navigate('/', { replace: true });
+    }
+  }, [state, navigate]);
 
   const handleClose = () => {
     navigate('/');
   };
+
+  // Show nothing while redirecting
+  if (!state || !state.bricks) {
+    return null;
+  }
 
   return (
     <PrintView
