@@ -27,6 +27,8 @@ export function ExternalLinksSettings({
   onToggle,
 }: ExternalLinksSettingsProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editUrl, setEditUrl] = useState('');
   const [newLinkName, setNewLinkName] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -44,9 +46,23 @@ export function ExternalLinksSettings({
     }
   };
 
-  const handleEdit = (id: string, name: string, url: string) => {
-    onUpdate(id, { name, url });
+  const handleStartEdit = (link: { id: string; name: string; url: string }) => {
+    setEditingId(link.id);
+    setEditName(link.name);
+    setEditUrl(link.url);
+  };
+
+  const handleSaveEdit = (id: string) => {
+    onUpdate(id, { name: editName, url: editUrl });
     setEditingId(null);
+    setEditName('');
+    setEditUrl('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditName('');
+    setEditUrl('');
   };
 
   return (
@@ -78,28 +94,24 @@ export function ExternalLinksSettings({
                   <TextField
                     size="small"
                     label="Name"
-                    defaultValue={link.name}
-                    id={`edit-name-${link.id}`}
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
                   />
                   <TextField
                     size="small"
                     label="URL"
-                    defaultValue={link.url}
-                    id={`edit-url-${link.id}`}
+                    value={editUrl}
+                    onChange={(e) => setEditUrl(e.target.value)}
                   />
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button
                       size="small"
                       variant="contained"
-                      onClick={() => {
-                        const nameInput = document.getElementById(`edit-name-${link.id}`) as HTMLInputElement;
-                        const urlInput = document.getElementById(`edit-url-${link.id}`) as HTMLInputElement;
-                        handleEdit(link.id, nameInput.value, urlInput.value);
-                      }}
+                      onClick={() => handleSaveEdit(link.id)}
                     >
                       Save
                     </Button>
-                    <Button size="small" onClick={() => setEditingId(null)}>
+                    <Button size="small" onClick={handleCancelEdit}>
                       Cancel
                     </Button>
                   </Box>
@@ -120,7 +132,7 @@ export function ExternalLinksSettings({
                   <IconButton
                     edge="end"
                     aria-label="edit"
-                    onClick={() => setEditingId(link.id)}
+                    onClick={() => handleStartEdit(link)}
                     sx={{ mr: 1 }}
                   >
                     <EditIcon />
