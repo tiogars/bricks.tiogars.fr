@@ -36,7 +36,6 @@ export function Home() {
     if (editingBrick) {
       updateBrick(editingBrick.id, formData);
       setEditingBrick(null);
-      setBrickFormModalOpen(false);
     } else {
       addBrick(formData);
     }

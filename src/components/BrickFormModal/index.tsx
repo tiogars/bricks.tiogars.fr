@@ -14,14 +14,14 @@ interface BrickFormModalProps extends BrickFormProps {
 export function BrickFormModal({ open, onClose, onSubmit, editingBrick, onCancel, existingTags }: BrickFormModalProps) {
   const handleSubmit = (data: { number: string; title?: string; tags: string[] }) => {
     onSubmit(data);
-    // Close modal after successful submission only if not editing
-    if (!editingBrick) {
-      onClose();
-    }
+    // Always close modal after successful submission
+    onClose();
   };
 
   const handleCancel = () => {
-    onCancel?.();
+    if (onCancel) {
+      onCancel();
+    }
     onClose();
   };
 
