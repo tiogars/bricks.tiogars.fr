@@ -1,17 +1,33 @@
 import { useState } from 'react';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
+import Alert from '@mui/material/Alert';
+import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import type { Brick, ExportFormat } from '../../types';
 import { exportService } from '../../utils/exportService';
 import { importService } from '../../utils/importService';
 import type { ImportExportProps } from './ImportExport.types';
-import './ImportExport.css';
 
 export function ImportExport({ bricks, onImport, onClearAll }: ImportExportProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [pendingImport, setPendingImport] = useState<{ bricks: Brick[], count: number } | null>(null);
 
   const handleExport = (format: ExportFormat) => {
     if (bricks.length === 0) {
-      alert('No bricks to export!');
+      setImportError('No bricks to export!');
       return;
     }
 
@@ -39,8 +55,9 @@ export function ImportExport({ bricks, onImport, onClearAll }: ImportExportProps
       }
 
       exportService.downloadFile(content, filename, mimeType);
+      setImportError(null);
     } catch (error) {
-      alert('Failed to export data: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      setImportError('Failed to export data: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   };
 
@@ -75,100 +92,173 @@ export function ImportExport({ bricks, onImport, onClearAll }: ImportExportProps
         throw new Error('No bricks found in the imported file.');
       }
 
-      const shouldReplace = window.confirm(
-        `Import ${importedBricks.length} brick(s)? This will replace your current data.`
-      );
-
-      if (shouldReplace) {
-        onImport(importedBricks);
-        alert(`Successfully imported ${importedBricks.length} brick(s)!`);
-      }
+      setPendingImport({ bricks: importedBricks, count: importedBricks.length });
+      setImportDialogOpen(true);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       setImportError(errorMessage);
-      alert('Import failed: ' + errorMessage);
     } finally {
       setIsImporting(false);
       event.target.value = '';
     }
   };
 
-  const handleClearAll = () => {
-    if (bricks.length === 0) {
-      alert('No data to clear!');
-      return;
-    }
-
-    const confirmed = window.confirm(
-      'Are you sure you want to delete all bricks? This action cannot be undone!'
-    );
-
-    if (confirmed) {
-      onClearAll();
-      alert('All bricks have been deleted.');
+  const handleImportConfirm = () => {
+    if (pendingImport) {
+      onImport(pendingImport.bricks);
+      setImportDialogOpen(false);
+      setPendingImport(null);
     }
   };
 
+  const handleImportCancel = () => {
+    setImportDialogOpen(false);
+    setPendingImport(null);
+  };
+
+  const handleClearAll = () => {
+    if (bricks.length === 0) {
+      setImportError('No data to clear!');
+      return;
+    }
+    setClearDialogOpen(true);
+  };
+
+  const handleClearConfirm = () => {
+    onClearAll();
+    setClearDialogOpen(false);
+  };
+
+  const handleClearCancel = () => {
+    setClearDialogOpen(false);
+  };
+
   return (
-    <div className="import-export-container">
-      <h2 className="section-title">💾 Import / Export</h2>
+    <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+        💾 Import / Export
+      </Typography>
 
-      <div className="export-section">
-        <h3 className="subsection-title">Export Your Data</h3>
-        <div className="button-group">
-          <button
+      {importError && (
+        <Alert severity="error" onClose={() => setImportError(null)} sx={{ mb: 2 }}>
+          {importError}
+        </Alert>
+      )}
+
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" component="h3" gutterBottom sx={{ fontSize: '1rem', fontWeight: 600 }}>
+          Export Your Data
+        </Typography>
+        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
             onClick={() => handleExport('json')}
-            className="btn btn-export"
             disabled={bricks.length === 0}
+            size="small"
           >
-            📄 Export JSON
-          </button>
-          <button
+            JSON
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
             onClick={() => handleExport('csv')}
-            className="btn btn-export"
             disabled={bricks.length === 0}
+            size="small"
           >
-            📊 Export CSV
-          </button>
-          <button
+            CSV
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
             onClick={() => handleExport('xml')}
-            className="btn btn-export"
             disabled={bricks.length === 0}
+            size="small"
           >
-            📋 Export XML
-          </button>
-        </div>
-      </div>
+            XML
+          </Button>
+        </Stack>
+      </Box>
 
-      <div className="import-section">
-        <h3 className="subsection-title">Import Data</h3>
-        <label className="import-label">
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" component="h3" gutterBottom sx={{ fontSize: '1rem', fontWeight: 600 }}>
+          Import Data
+        </Typography>
+        <Button
+          variant="contained"
+          component="label"
+          startIcon={<UploadIcon />}
+          disabled={isImporting}
+          sx={{
+            background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)',
+            },
+          }}
+        >
+          {isImporting ? 'Importing...' : 'Import File'}
           <input
             type="file"
             accept=".json,.csv,.xml"
             onChange={handleImport}
             disabled={isImporting}
-            className="import-input"
+            hidden
           />
-          <span className="btn btn-import">
-            {isImporting ? '⏳ Importing...' : '📥 Import File'}
-          </span>
-        </label>
-        <p className="import-note">Supports JSON, CSV, and XML formats</p>
-        {importError && (
-          <p className="import-error">❌ {importError}</p>
-        )}
-      </div>
+        </Button>
+        <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
+          Supports JSON, CSV, and XML formats
+        </Typography>
+      </Box>
 
-      <div className="danger-section">
-        <button
+      <Box>
+        <Button
+          variant="contained"
+          color="error"
+          startIcon={<DeleteForeverIcon />}
           onClick={handleClearAll}
-          className="btn btn-danger"
           disabled={bricks.length === 0}
+          sx={{
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+            },
+          }}
         >
-          🗑️ Clear All Data
-        </button>
-      </div>
-    </div>
+          Clear All Data
+        </Button>
+      </Box>
+
+      {/* Clear All Confirmation Dialog */}
+      <Dialog open={clearDialogOpen} onClose={handleClearCancel}>
+        <DialogTitle>Clear All Data</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete all {bricks.length} brick(s)? This action cannot be undone!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClearCancel}>Cancel</Button>
+          <Button onClick={handleClearConfirm} color="error" variant="contained">
+            Delete All
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Import Confirmation Dialog */}
+      <Dialog open={importDialogOpen} onClose={handleImportCancel}>
+        <DialogTitle>Import Data</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Import {pendingImport?.count} brick(s)? This will replace your current data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleImportCancel}>Cancel</Button>
+          <Button onClick={handleImportConfirm} color="primary" variant="contained">
+            Import
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
   );
 }

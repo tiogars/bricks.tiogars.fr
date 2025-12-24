@@ -1,19 +1,28 @@
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import { ThemeSelector } from '../ThemeSelector';
-import './Header.css';
 
 export function Header() {
   return (
-    <header className="header">
-      <div className="header-content">
-        <h1 className="header-title">
-          <span className="brick-emoji">🧱</span>
-          Brick Manager
-        </h1>
-        <p className="header-subtitle">Manage your favorite brick numbers with style!</p>
-        <div className="header-theme">
-          <ThemeSelector />
-        </div>
-      </div>
-    </header>
+    <AppBar position="static" sx={{ mb: 4 }}>
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ flexDirection: 'column', py: 2, gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 700, color: 'white' }}>
+              <span role="img" aria-label="brick">🧱</span> Brick Manager
+            </Typography>
+          </Box>
+          <Typography variant="subtitle1" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            Manage your favorite brick numbers with style!
+          </Typography>
+          <Box sx={{ mt: 1 }}>
+            <ThemeSelector />
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
