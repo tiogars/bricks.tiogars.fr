@@ -18,6 +18,7 @@ export const brickService = {
       number: formData.number,
       title: formData.title,
       tags: formData.tags,
+      imageUrl: formData.imageUrl,
       createdAt: now,
       updatedAt: now,
     };
@@ -32,6 +33,7 @@ export const brickService = {
       number: formData.number,
       title: formData.title,
       tags: formData.tags,
+      imageUrl: formData.imageUrl,
       updatedAt: new Date().toISOString(),
     };
   },

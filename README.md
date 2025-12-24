@@ -5,6 +5,7 @@ A modern React web application for managing your favorite brick numbers with opt
 ## ✨ Features
 
 - **📝 Manage Bricks**: Add, edit, and delete brick entries with numbers and optional titles
+- **🖼️ Brick Images**: Upload and display images for each brick with automatic storage in browser localStorage
 - **🏷️ Tag System**: Categorize bricks with custom tags for easy organization
 - **🔍 Filter & Sort**: Filter bricks by tags and view them sorted by number
 - **💾 Data Persistence**: All data is stored in browser localStorage
@@ -84,7 +85,19 @@ src/
 1. Enter a brick number (required)
 2. Optionally add a title
 3. Add tags by typing and pressing "Add Tag" or selecting from quick-add suggestions
-4. Click "Add Brick" to save
+4. Optionally upload an image of the brick
+5. Click "Add Brick" to save
+
+### Adding Brick Images
+
+- **Supported formats**: JPEG, PNG, GIF, WebP
+- **Recommended size**: 300x300 pixels or smaller
+- **File size limit**: 500KB maximum (for optimal localStorage performance)
+- **Best practices**:
+  - Use JPEG for photographs (better compression)
+  - Use PNG for images with transparency
+  - Resize images before upload to reduce storage usage
+  - Consider using square images (1:1 aspect ratio) for consistent display
 
 ### Editing a Brick
 
@@ -145,11 +158,14 @@ Choose from three formats:
     "number": "12345",
     "title": "My First Brick",
     "tags": ["collection", "favorite"],
+    "imageUrl": "data:image/jpeg;base64,...",
     "createdAt": "2025-12-20T12:00:00.000Z",
     "updatedAt": "2025-12-20T12:00:00.000Z"
   }
 ]
 ```
+
+Note: The `imageUrl` field stores images as base64-encoded data URLs.
 
 ### CSV Format
 ```csv
