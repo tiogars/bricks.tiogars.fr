@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import Fab from '@mui/material/Fab';
+import Tooltip from '@mui/material/Tooltip';
+import AddIcon from '@mui/icons-material/Add';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 import { useBricks } from '../hooks/useBricks';
 import { Header } from '../components/Header';
-import { BrickForm } from '../components/BrickForm';
+import { BrickFormModal } from '../components/BrickFormModal';
 import { BrickList } from '../components/BrickList';
 import { TagFilter } from '../components/TagFilter';
-import { ImportExport } from '../components/ImportExport';
+import { ImportExportModal } from '../components/ImportExportModal';
 import { Footer } from '../components/Footer';
 import type { Brick } from '../types';
 
@@ -16,9 +20,12 @@ export function Home() {
   const { bricks, tags, addBrick, updateBrick, deleteBrick, importBricks, clearAllBricks } = useBricks();
   const [editingBrick, setEditingBrick] = useState<Brick | null>(null);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [brickFormModalOpen, setBrickFormModalOpen] = useState(false);
+  const [importExportModalOpen, setImportExportModalOpen] = useState(false);
 
   const handleEdit = (brick: Brick) => {
     setEditingBrick(brick);
+    setBrickFormModalOpen(true);
   };
 
   const handleCancelEdit = () => {
@@ -42,53 +49,90 @@ export function Home() {
     navigate('/print', { state: { bricks: filteredBricks, selectedTags } });
   };
 
+  const handleBrickFormModalClose = () => {
+    setBrickFormModalOpen(false);
+    setEditingBrick(null);
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
       
       <Container component="main" maxWidth="lg" sx={{ flex: 1, py: 4 }}>
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '5fr 7fr' },
-            gap: 4,
-            alignItems: 'start',
-          }}
-        >
-          <Box>
-            <BrickForm
-              key={editingBrick?.id || 'new'}
-              onSubmit={handleFormSubmit}
-              editingBrick={editingBrick}
-              onCancel={handleCancelEdit}
-              existingTags={tags}
-            />
-            
-            <ImportExport
-              bricks={bricks}
-              onImport={importBricks}
-              onClearAll={clearAllBricks}
-            />
-          </Box>
+        <Box>
+          <TagFilter
+            tags={tags}
+            selectedTags={selectedTags}
+            onTagsChange={setSelectedTags}
+            onPrint={handlePrint}
+          />
 
-          <Box>
-            <TagFilter
-              tags={tags}
-              selectedTags={selectedTags}
-              onTagsChange={setSelectedTags}
-              onPrint={handlePrint}
-            />
-
-            <BrickList
-              bricks={filteredBricks}
-              onEdit={handleEdit}
-              onDelete={deleteBrick}
-            />
-          </Box>
+          <BrickList
+            bricks={filteredBricks}
+            onEdit={handleEdit}
+            onDelete={deleteBrick}
+          />
         </Box>
       </Container>
       
       <Footer />
+
+      {/* Floating Action Buttons */}
+      <Tooltip title="Add New Brick" placement="left">
+        <Fab
+          color="primary"
+          aria-label="add brick"
+          onClick={() => setBrickFormModalOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+            },
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      </Tooltip>
+
+      <Tooltip title="Import / Export" placement="left">
+        <Fab
+          color="secondary"
+          aria-label="import export"
+          onClick={() => setImportExportModalOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 96,
+            right: 24,
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+            },
+          }}
+        >
+          <ImportExportIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* Modals */}
+      <BrickFormModal
+        open={brickFormModalOpen}
+        onClose={handleBrickFormModalClose}
+        onSubmit={handleFormSubmit}
+        editingBrick={editingBrick}
+        onCancel={handleCancelEdit}
+        existingTags={tags}
+      />
+
+      <ImportExportModal
+        open={importExportModalOpen}
+        onClose={() => setImportExportModalOpen(false)}
+        bricks={bricks}
+        onImport={importBricks}
+        onClearAll={clearAllBricks}
+      />
     </Box>
   );
 }
