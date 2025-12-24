@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import { useBricks } from '../hooks/useBricks';
 import { Header } from '../components/Header';
 import { BrickForm } from '../components/BrickForm';
@@ -41,12 +43,19 @@ export function Home() {
   };
 
   return (
-    <div className="app">
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
       
-      <main className="main-content">
-        <div className="container">
-          <div className="control-panel">
+      <Container component="main" maxWidth="lg" sx={{ flex: 1, py: 4 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '5fr 7fr' },
+            gap: 4,
+            alignItems: 'start',
+          }}
+        >
+          <Box>
             <BrickForm
               key={editingBrick?.id || 'new'}
               onSubmit={handleFormSubmit}
@@ -60,9 +69,9 @@ export function Home() {
               onImport={importBricks}
               onClearAll={clearAllBricks}
             />
-          </div>
+          </Box>
 
-          <div className="content-section">
+          <Box>
             <TagFilter
               tags={tags}
               selectedTags={selectedTags}
@@ -75,11 +84,11 @@ export function Home() {
               onEdit={handleEdit}
               onDelete={deleteBrick}
             />
-          </div>
-        </div>
-      </main>
+          </Box>
+        </Box>
+      </Container>
       
       <Footer />
-    </div>
+    </Box>
   );
 }

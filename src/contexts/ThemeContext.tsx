@@ -1,7 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import type { Theme } from '../types/theme';
 import { getTheme, DEFAULT_THEME_NAME } from '../themes/themes';
+import { createMuiTheme } from '../themes/muiTheme';
 
 interface ThemeContextType {
   theme: Theme;
@@ -17,12 +20,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const theme = getTheme(themeName);
+  const muiTheme = useMemo(() => createMuiTheme(theme), [theme]);
 
   useEffect(() => {
     localStorage.setItem('theme', themeName);
     
-    // Apply CSS variables to root
-    // Note: Assumes theme color keys are in simple camelCase format
+    // Apply CSS variables to root for legacy components
     const root = document.documentElement;
     Object.entries(theme.colors).forEach(([key, value]) => {
       // Convert camelCase to kebab-case for CSS variables
@@ -33,7 +36,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme: setThemeName }}>
-      {children}
+      <MuiThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
     </ThemeContext.Provider>
   );
 };

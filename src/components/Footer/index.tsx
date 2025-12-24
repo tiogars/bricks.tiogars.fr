@@ -1,29 +1,45 @@
-import './Footer.css';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Container from '@mui/material/Container';
 
 export function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <p className="footer-text">
-          <a 
-            href="https://github.com/tiogars/noob-bricks" 
-            target="_blank" 
+    <Box
+      component="footer"
+      sx={{
+        py: 3,
+        px: 2,
+        mt: 'auto',
+        backgroundColor: (theme) =>
+          theme.palette.mode === 'light'
+            ? theme.palette.grey[100]
+            : theme.palette.grey[800],
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography variant="body2" color="text.secondary" align="center">
+          <Link
+            href="https://github.com/tiogars/noob-bricks"
+            target="_blank"
             rel="noopener noreferrer"
-            className="footer-link"
+            underline="hover"
+            sx={{ mr: 1 }}
           >
             🔗 GitHub Repository
-          </a>
+          </Link>
           {' • '}
-          <a 
-            href="https://github.com/tiogars/noob-bricks/issues" 
-            target="_blank" 
+          <Link
+            href="https://github.com/tiogars/noob-bricks/issues"
+            target="_blank"
             rel="noopener noreferrer"
-            className="footer-link"
+            underline="hover"
+            sx={{ ml: 1 }}
           >
             🐛 Report an Issue
-          </a>
-        </p>
-      </div>
-    </footer>
+          </Link>
+        </Typography>
+      </Container>
+    </Box>
   );
 }

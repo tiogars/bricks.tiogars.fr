@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import type { BrickFormProps, BrickFormInputs } from './BrickForm.types';
-import './BrickForm.css';
 
 export function BrickForm({ onSubmit, editingBrick, onCancel, existingTags }: BrickFormProps) {
   const [tagInput, setTagInput] = useState('');
@@ -19,7 +27,7 @@ export function BrickForm({ onSubmit, editingBrick, onCancel, existingTags }: Br
       title: editingBrick?.title || '',
       tags: editingBrick?.tags || [],
     },
-    mode: 'onBlur', // Validate on blur for better UX
+    mode: 'onBlur',
   });
 
   const selectedTags = watch('tags');
@@ -77,16 +85,13 @@ export function BrickForm({ onSubmit, editingBrick, onCancel, existingTags }: Br
   };
 
   return (
-    <div className="brick-form-container">
-      <h2 className="form-title">
+    <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
         {editingBrick ? '✏️ Edit Brick' : '➕ Add New Brick'}
-      </h2>
+      </Typography>
       
-      <form onSubmit={handleSubmit(onFormSubmit)} className="brick-form">
-        <div className="form-group">
-          <label htmlFor="brick-number">
-            Brick Number <span className="required">*</span>
-          </label>
+      <Box component="form" onSubmit={handleSubmit(onFormSubmit)} noValidate>
+        <Stack spacing={3}>
           <Controller
             name="number"
             control={control}
@@ -97,108 +102,111 @@ export function BrickForm({ onSubmit, editingBrick, onCancel, existingTags }: Br
               },
             }}
             render={({ field }) => (
-              <>
-                <input
-                  {...field}
-                  type="text"
-                  id="brick-number"
-                  placeholder="e.g., 12345"
-                  className={`form-input ${errors.number ? 'error' : ''}`}
-                />
-                {errors.number && (
-                  <span className="error-message">{errors.number.message}</span>
-                )}
-              </>
+              <TextField
+                {...field}
+                label="Brick Number"
+                placeholder="e.g., 12345"
+                required
+                fullWidth
+                error={!!errors.number}
+                helperText={errors.number?.message}
+              />
             )}
           />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="brick-title">Title (Optional)</label>
           <Controller
             name="title"
             control={control}
             render={({ field }) => (
-              <input
+              <TextField
                 {...field}
-                type="text"
-                id="brick-title"
+                label="Title (Optional)"
                 placeholder="e.g., My favorite brick"
-                className="form-input"
+                fullWidth
               />
             )}
           />
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="tag-input">Tags</label>
-          <div className="tag-input-group">
-            <input
-              type="text"
-              id="tag-input"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Enter tag and press Enter"
-              className="form-input"
-            />
-            <button
-              type="button"
-              onClick={handleAddTag}
-              className="btn btn-secondary"
-              disabled={!tagInput.trim()}
+          <Box>
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+              <TextField
+                label="Tags"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Enter tag and press Enter"
+                fullWidth
+                size="small"
+              />
+              <Button
+                variant="outlined"
+                onClick={handleAddTag}
+                disabled={!tagInput.trim()}
+                sx={{ minWidth: '100px' }}
+              >
+                Add Tag
+              </Button>
+            </Stack>
+
+            {existingTags.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                  Quick add:
+                </Typography>
+                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                  {existingTags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      size="small"
+                      onClick={() => handleQuickAddTag(tag)}
+                      disabled={selectedTags.includes(tag)}
+                      variant={selectedTags.includes(tag) ? 'filled' : 'outlined'}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
+
+            {selectedTags.length > 0 && (
+              <Box>
+                <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                  Selected tags:
+                </Typography>
+                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                  {selectedTags.map((tag) => (
+                    <Chip
+                      key={tag}
+                      label={tag}
+                      onDelete={() => handleRemoveTag(tag)}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
+          </Box>
+
+          <Stack direction="row" spacing={2} sx={{ pt: 1 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              startIcon={editingBrick ? <SaveIcon /> : <AddIcon />}
+              fullWidth
             >
-              Add Tag
-            </button>
-          </div>
-
-          {existingTags.length > 0 && (
-            <div className="quick-tags">
-              <span className="quick-tags-label">Quick add:</span>
-              {existingTags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => handleQuickAddTag(tag)}
-                  className="quick-tag-btn"
-                  disabled={selectedTags.includes(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {selectedTags.length > 0 && (
-            <div className="selected-tags">
-              {selectedTags.map((tag) => (
-                <span key={tag} className="tag">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTag(tag)}
-                    className="tag-remove"
-                    aria-label={`Remove ${tag}`}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="form-actions">
-          <button type="submit" className="btn btn-primary">
-            {editingBrick ? '💾 Update Brick' : '➕ Add Brick'}
-          </button>
-          {editingBrick && (
-            <button type="button" onClick={onCancel} className="btn btn-secondary">
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
+              {editingBrick ? 'Update Brick' : 'Add Brick'}
+            </Button>
+            {editingBrick && (
+              <Button
+                variant="outlined"
+                onClick={onCancel}
+                fullWidth
+              >
+                Cancel
+              </Button>
+            )}
+          </Stack>
+        </Stack>
+      </Box>
+    </Paper>
   );
 }

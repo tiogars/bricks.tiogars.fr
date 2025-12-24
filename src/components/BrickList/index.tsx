@@ -1,79 +1,152 @@
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useState } from 'react';
 import type { BrickListProps } from './BrickList.types';
 import { brickService } from '../../models/brickService';
-import './BrickList.css';
 
 export function BrickList({ bricks, onEdit, onDelete }: BrickListProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [brickToDelete, setBrickToDelete] = useState<BrickListProps['bricks'][0] | null>(null);
   const sortedBricks = brickService.sortByNumber(bricks);
 
-  const handleDelete = (brick: BrickListProps['bricks'][0]) => {
-    if (window.confirm(`Are you sure you want to delete brick ${brick.number}?`)) {
-      onDelete(brick.id);
+  const handleDeleteClick = (brick: BrickListProps['bricks'][0]) => {
+    setBrickToDelete(brick);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (brickToDelete) {
+      onDelete(brickToDelete.id);
+      setDeleteDialogOpen(false);
+      setBrickToDelete(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setBrickToDelete(null);
   };
 
   if (bricks.length === 0) {
     return (
-      <div className="brick-list-empty">
-        <div className="empty-state">
-          <span className="empty-icon">📦</span>
-          <h3>No bricks yet!</h3>
-          <p>Add your first brick using the form above.</p>
-        </div>
-      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          py: 8,
+          px: 2,
+        }}
+      >
+        <Typography variant="h2" component="div" sx={{ fontSize: '4rem', mb: 2 }}>
+          📦
+        </Typography>
+        <Typography variant="h5" component="h3" gutterBottom>
+          No bricks yet!
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Add your first brick using the form above.
+        </Typography>
+      </Box>
     );
   }
 
   return (
-    <div className="brick-list">
-      <h2 className="list-title">
-        📋 Your Bricks <span className="brick-count">({bricks.length})</span>
-      </h2>
-      
-      <div className="bricks-grid">
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
+        📋 Your Bricks{' '}
+        <Typography component="span" variant="h6" color="text.secondary">
+          ({bricks.length})
+        </Typography>
+      </Typography>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+          },
+          gap: 3,
+        }}
+      >
         {sortedBricks.map((brick) => (
-          <div key={brick.id} className="brick-card">
-            <div className="brick-header">
-              <h3 className="brick-number">🧱 {brick.number}</h3>
-              <div className="brick-actions">
-                <button
-                  onClick={() => onEdit(brick)}
-                  className="btn-icon btn-edit"
-                  title="Edit brick"
-                  aria-label="Edit brick"
-                >
-                  ✏️
-                </button>
-                <button
-                  onClick={() => handleDelete(brick)}
-                  className="btn-icon btn-delete"
-                  title="Delete brick"
-                  aria-label="Delete brick"
-                >
-                  🗑️
-                </button>
-              </div>
-            </div>
+          <Card key={brick.id}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>
+                  🧱 {brick.number}
+                </Typography>
+                <CardActions sx={{ p: 0 }}>
+                  <IconButton
+                    size="small"
+                    onClick={() => onEdit(brick)}
+                    aria-label="Edit brick"
+                    color="primary"
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDeleteClick(brick)}
+                    aria-label="Delete brick"
+                    color="error"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </CardActions>
+              </Box>
 
-            {brick.title && (
-              <p className="brick-title">{brick.title}</p>
-            )}
+              {brick.title && (
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {brick.title}
+                </Typography>
+              )}
 
-            {brick.tags.length > 0 && (
-              <div className="brick-tags">
-                {brick.tags.map((tag) => (
-                  <span key={tag} className="tag-badge">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
+              {brick.tags.length > 0 && (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                  {brick.tags.map((tag) => (
+                    <Chip key={tag} label={tag} size="small" />
+                  ))}
+                </Box>
+              )}
 
-            <div className="brick-meta">
-              <small>Created: {new Date(brick.createdAt).toLocaleDateString()}</small>
-            </div>
-          </div>
+              <Typography variant="caption" color="text.secondary">
+                Created: {new Date(brick.createdAt).toLocaleDateString()}
+              </Typography>
+            </CardContent>
+          </Card>
         ))}
-      </div>
-    </div>
+      </Box>
+
+      <Dialog open={deleteDialogOpen} onClose={handleDeleteCancel}>
+        <DialogTitle>Delete Brick</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete brick {brickToDelete?.number}?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }
