@@ -3,6 +3,7 @@ export interface Brick {
   number: string;
   title?: string;
   tags: string[];
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -11,6 +12,7 @@ export interface BrickFormData {
   number: string;
   title?: string;
   tags: string[];
+  imageUrl?: string;
 }
 
 export type ExportFormat = 'json' | 'csv' | 'xml';

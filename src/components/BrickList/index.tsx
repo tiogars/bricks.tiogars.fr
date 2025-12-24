@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Chip from '@mui/material/Chip';
@@ -11,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import Skeleton from '@mui/material/Skeleton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -21,6 +23,8 @@ import { brickService } from '../../models/brickService';
 export function BrickList({ bricks, onEdit, onDelete, externalLinks = [] }: BrickListProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [brickToDelete, setBrickToDelete] = useState<BrickListProps['bricks'][0] | null>(null);
+  const [imageLoadError, setImageLoadError] = useState<Record<string, boolean>>({});
+  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
   const sortedBricks = brickService.sortByNumber(bricks);
 
   const handleDeleteClick = (brick: BrickListProps['bricks'][0]) => {
@@ -39,6 +43,15 @@ export function BrickList({ bricks, onEdit, onDelete, externalLinks = [] }: Bric
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
     setBrickToDelete(null);
+  };
+
+  const handleImageLoad = (brickId: string) => {
+    setImageLoading(prev => ({ ...prev, [brickId]: false }));
+  };
+
+  const handleImageError = (brickId: string) => {
+    setImageLoadError(prev => ({ ...prev, [brickId]: true }));
+    setImageLoading(prev => ({ ...prev, [brickId]: false }));
   };
 
   if (bricks.length === 0) {
@@ -88,6 +101,66 @@ export function BrickList({ bricks, onEdit, onDelete, externalLinks = [] }: Bric
       >
         {sortedBricks.map((brick) => (
           <Card key={brick.id}>
+            {brick.imageUrl && (
+              <Box sx={{ position: 'relative', paddingTop: '56.25%', bgcolor: 'grey.100' }}>
+                {(imageLoading[brick.id] !== false) && !imageLoadError[brick.id] && (
+                  <Skeleton
+                    variant="rectangular"
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                )}
+                {!imageLoadError[brick.id] && (
+                  <CardMedia
+                    component="img"
+                    image={brick.imageUrl}
+                    alt={`Brick ${brick.number}`}
+                    onLoad={() => handleImageLoad(brick.id)}
+                    onError={() => handleImageError(brick.id)}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: imageLoading[brick.id] === false ? 'block' : 'none',
+                    }}
+                  />
+                )}
+              </Box>
+            )}
+            {!brick.imageUrl && (
+              <Box
+                sx={{
+                  position: 'relative',
+                  paddingTop: '56.25%',
+                  bgcolor: 'grey.100',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography
+                  variant="h1"
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '4rem',
+                    opacity: 0.3,
+                  }}
+                >
+                  🧱
+                </Typography>
+              </Box>
+            )}
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                 <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>
