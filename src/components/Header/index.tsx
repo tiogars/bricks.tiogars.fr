@@ -18,6 +18,17 @@ export function Header() {
           <Typography variant="subtitle1" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
             Manage your favorite brick numbers with style!
           </Typography>
+          <Typography 
+            variant="caption" 
+            sx={{ 
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontStyle: 'italic',
+              textAlign: 'center',
+              maxWidth: '600px'
+            }}
+          >
+            ⚠️ Data stored in browser - Export regularly to prevent data loss
+          </Typography>
           <Box sx={{ mt: 1 }}>
             <ThemeSelector />
           </Box>
