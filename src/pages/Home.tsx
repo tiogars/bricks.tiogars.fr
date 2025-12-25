@@ -15,7 +15,9 @@ import { BrickList } from '../components/BrickList';
 import { TagFilter } from '../components/TagFilter';
 import { ImportExportModal } from '../components/ImportExportModal';
 import { ExternalLinksSettings } from '../components/ExternalLinksSettings';
+import { DisclaimerModal } from '../components/DisclaimerModal';
 import { Footer } from '../components/Footer';
+import { storageService } from '../storage/storageService';
 import type { Brick } from '../types';
 
 export function Home() {
@@ -27,6 +29,12 @@ export function Home() {
   const [brickFormModalOpen, setBrickFormModalOpen] = useState(false);
   const [importExportModalOpen, setImportExportModalOpen] = useState(false);
   const [externalLinksSettingsOpen, setExternalLinksSettingsOpen] = useState(false);
+  const [disclaimerModalOpen, setDisclaimerModalOpen] = useState(() => storageService.isFirstLaunch());
+
+  const handleDisclaimerClose = () => {
+    storageService.markDisclaimerShown();
+    setDisclaimerModalOpen(false);
+  };
 
   const handleEdit = (brick: Brick) => {
     setEditingBrick(brick);
@@ -166,6 +174,11 @@ export function Home() {
         onUpdate={updateExternalLink}
         onDelete={deleteExternalLink}
         onToggle={toggleExternalLink}
+      />
+
+      <DisclaimerModal
+        open={disclaimerModalOpen}
+        onClose={handleDisclaimerClose}
       />
     </Box>
   );

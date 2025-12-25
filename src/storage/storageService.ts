@@ -1,6 +1,7 @@
 import type { Brick, ExternalLink } from '../types';
 
 const STORAGE_KEY = 'noob-bricks-data';
+const FIRST_LAUNCH_KEY = 'noob-bricks-first-launch';
 
 const DEFAULT_EXTERNAL_LINKS: ExternalLink[] = [
   {
@@ -78,5 +79,29 @@ export const storageService = {
     const data = this.load() || { bricks: [], tags: [], externalLinks: [] };
     data.externalLinks = externalLinks;
     this.save(data);
+  },
+
+  /**
+   * Check if this is the first launch
+   */
+  isFirstLaunch(): boolean {
+    try {
+      const hasSeenDisclaimer = localStorage.getItem(FIRST_LAUNCH_KEY);
+      return hasSeenDisclaimer === null;
+    } catch (error) {
+      console.error('Failed to check first launch status:', error);
+      return false;
+    }
+  },
+
+  /**
+   * Mark that the disclaimer has been shown
+   */
+  markDisclaimerShown(): void {
+    try {
+      localStorage.setItem(FIRST_LAUNCH_KEY, 'true');
+    } catch (error) {
+      console.error('Failed to mark disclaimer as shown:', error);
+    }
   },
 };
