@@ -7,16 +7,17 @@ A modern React web application for managing your favorite brick numbers with opt
 ## ✨ Features
 
 - **📝 Manage Bricks**: Add, edit, and delete brick entries with numbers and optional titles
-- **🖼️ Brick Images**: Upload and display images for each brick with automatic storage in browser localStorage
+- **🖼️ Brick Images**: Upload and display images for each brick with efficient storage using IndexedDB
 - **🏷️ Tag System**: Categorize bricks with custom tags for easy organization
 - **🔍 Filter & Sort**: Filter bricks by tags and view them sorted by number
-- **💾 Data Persistence**: All data is stored in browser localStorage
+- **💾 Data Persistence**: Hybrid storage system - metadata in localStorage, images in IndexedDB
 - **📦 Import/Export**: Import and export your brick collection in JSON, CSV, or XML formats
 - **🖨️ Print View**: Clean, printable brick lists with optional tag filtering
 - **🎨 Modern UI**: Beautiful gradient design with smooth animations and responsive layout
 - **📱 Mobile Friendly**: Fully responsive design that works on all devices
 - **⚡ Fast**: Built with Vite for lightning-fast development and optimized builds
 - **🔒 Type Safe**: Written in TypeScript with strict typing
+- **🔄 Auto-Migration**: Automatically migrates from old storage format to new optimized format
 
 ## 🚀 Getting Started
 
@@ -59,23 +60,31 @@ The project follows a modular layered architecture:
 ```
 src/
 ├── components/        # React UI components
-│   ├── Header.tsx
-│   ├── BrickForm.tsx
-│   ├── BrickList.tsx
-│   ├── TagFilter.tsx
-│   ├── ImportExport.tsx
-│   └── PrintView.tsx
+│   ├── BrickCard/        # Individual brick card with image loading
+│   ├── BrickForm/        # Form for adding/editing bricks
+│   ├── BrickImage/       # Image component with IndexedDB support
+│   ├── BrickList/        # List view of all bricks
+│   ├── Header/           # App header
+│   ├── TagFilter/        # Tag filtering component
+│   ├── ImportExport/     # Import/export functionality
+│   └── PrintView/        # Print-optimized view
 ├── hooks/            # Custom React hooks
-│   └── useBricks.ts
+│   ├── useBricks.ts      # Main brick management hook
+│   ├── useImage.ts       # Image loading from IndexedDB
+│   └── useExternalLinks.ts
 ├── models/           # Business logic layer
 │   └── brickService.ts
-├── storage/          # LocalStorage abstraction layer
-│   └── storageService.ts
+├── storage/          # Storage abstraction layer
+│   ├── storageService.ts      # localStorage for metadata
+│   ├── imageStorageService.ts # IndexedDB for images
+│   └── migrationService.ts    # Storage format migration
 ├── types/            # TypeScript type definitions
 │   └── index.ts
 ├── utils/            # Utility functions
-│   ├── exportService.ts
-│   └── importService.ts
+│   ├── exportService.ts         # Data export utilities
+│   ├── enhancedExportService.ts # Export with IndexedDB images
+│   ├── importService.ts         # Data import utilities
+│   └── imageService.ts          # Image manipulation utilities
 ├── App.tsx           # Main application component
 └── main.tsx          # Application entry point
 ```
@@ -153,6 +162,40 @@ Choose from three formats:
 - **pnpm** - Fast, disk space efficient package manager
 - **ESLint** - Code quality and consistency
 - **CSS3** - Modern styling with animations
+- **IndexedDB** - Browser database for efficient image storage
+- **localStorage** - Browser storage for metadata
+
+## 🗄️ Storage Architecture
+
+The application uses a hybrid storage approach to optimize space and performance:
+
+### Hybrid Storage System
+
+1. **localStorage** - Stores brick metadata (numbers, titles, tags, timestamps)
+   - Limited to 5-10MB across all data
+   - Fast synchronous access
+   - Used for lightweight data that changes frequently
+
+2. **IndexedDB** - Stores brick images separately
+   - Much larger storage capacity (50MB+ typically)
+   - Efficient binary data storage
+   - Images are referenced by unique IDs in metadata
+
+### Benefits
+
+- **Reduced localStorage Usage**: Images no longer stored as base64 in localStorage
+- **Better Performance**: IndexedDB handles large binary data more efficiently
+- **Automatic Migration**: Existing data automatically migrated on first load
+- **Seamless Export**: Images are fetched from IndexedDB and included in exports
+
+### Migration
+
+The app automatically detects and migrates old data format (base64 images in localStorage) to the new format (image IDs with IndexedDB storage) when you first load the app after the update. This migration:
+
+- Runs once on first app load
+- Moves all images to IndexedDB
+- Updates brick records with image ID references
+- Preserves all existing data and functionality
 
 ## 📝 Data Format
 
@@ -171,7 +214,7 @@ Choose from three formats:
 ]
 ```
 
-Note: The `imageUrl` field stores images as base64-encoded data URLs.
+Note: When exporting, the `imageUrl` field contains base64-encoded data URLs. When stored in the app, it contains image ID references (e.g., `img-1234567890-abc123`) that point to images in IndexedDB.
 
 ### CSV Format
 ```csv
