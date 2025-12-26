@@ -113,9 +113,15 @@ export function useBricks() {
   const clearAllBricks = async () => {
     const data = storageService.load();
     const externalLinks = data?.externalLinks;
+    
+    // Clear images from IndexedDB
+    await storageService.clear();
+    
+    // Reset state
     setBricks([]);
     setTags([]);
-    await storageService.clear();
+    
+    // Preserve external links
     storageService.save({ bricks: [], tags: [], externalLinks });
   };
 

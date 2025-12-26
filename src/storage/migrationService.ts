@@ -1,23 +1,9 @@
 import type { Brick } from '../types';
 import { storageService, type StorageData } from './storageService';
 import { imageStorageService } from './imageStorageService';
+import { generateImageId, isBase64DataUrl } from '../utils/imageService';
 
 const MIGRATION_KEY = 'noob-bricks-migration-v1';
-
-/**
- * Generate a unique ID for an image
- */
-function generateImageId(): string {
-  return `img-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-}
-
-/**
- * Check if a string is a base64 data URL
- */
-function isBase64DataUrl(str: string | undefined): boolean {
-  if (!str) return false;
-  return str.startsWith('data:image/');
-}
 
 export const migrationService = {
   /**
