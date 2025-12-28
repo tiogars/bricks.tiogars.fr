@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import Fab from '@mui/material/Fab';
-import Tooltip from '@mui/material/Tooltip';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import AddIcon from '@mui/icons-material/Add';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PrintIcon from '@mui/icons-material/Print';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useBricks } from '../hooks/useBricks';
 import { useExternalLinks } from '../hooks/useExternalLinks';
 import { useAdModal } from '../hooks/useAdModal';
@@ -102,80 +104,77 @@ export function Home() {
       
       <Footer />
 
-      {/* Floating Action Buttons */}
-      <Tooltip title="Add New Brick" placement="left">
-        <Fab
-          color="primary"
-          aria-label="add brick"
-          onClick={() => setBrickFormModalOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
+      {/* SpeedDial for actions */}
+      <SpeedDial
+        ariaLabel="Actions menu"
+        sx={{ position: 'fixed', bottom: 24, right: 24 }}
+        icon={<SpeedDialIcon openIcon={<MenuIcon />} />}
+        FabProps={{
+          sx: {
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             '&:hover': {
               background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
             },
+          },
+        }}
+      >
+        <SpeedDialAction
+          icon={<AddIcon />}
+          tooltipTitle="Add New Brick"
+          tooltipOpen
+          onClick={() => setBrickFormModalOpen(true)}
+          FabProps={{
+            sx: {
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+              },
+            },
           }}
-        >
-          <AddIcon />
-        </Fab>
-      </Tooltip>
-
-      <Tooltip title="Print" placement="left">
-        <Fab
-          aria-label="print"
+        />
+        <SpeedDialAction
+          icon={<PrintIcon />}
+          tooltipTitle="Print"
+          tooltipOpen
           onClick={handlePrint}
-          sx={{
-            position: 'fixed',
-            bottom: 96,
-            right: 24,
-            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
+          FabProps={{
+            sx: {
+              background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
+              },
             },
           }}
-        >
-          <PrintIcon />
-        </Fab>
-      </Tooltip>
-
-      <Tooltip title="Import / Export" placement="left">
-        <Fab
-          color="secondary"
-          aria-label="import export"
+        />
+        <SpeedDialAction
+          icon={<ImportExportIcon />}
+          tooltipTitle="Import / Export"
+          tooltipOpen
           onClick={() => setImportExportModalOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 168,
-            right: 24,
-            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+          FabProps={{
+            sx: {
+              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+              },
             },
           }}
-        >
-          <ImportExportIcon />
-        </Fab>
-      </Tooltip>
-
-      <Tooltip title="External Links Settings" placement="left">
-        <Fab
-          aria-label="external links settings"
+        />
+        <SpeedDialAction
+          icon={<SettingsIcon />}
+          tooltipTitle="External Links Settings"
+          tooltipOpen
           onClick={() => setExternalLinksSettingsOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 240,
-            right: 24,
-            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            '&:hover': {
-              background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+          FabProps={{
+            sx: {
+              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+              },
             },
           }}
-        >
-          <SettingsIcon />
-        </Fab>
-      </Tooltip>
+        />
+      </SpeedDial>
 
       {/* Modals */}
       <BrickFormModal
