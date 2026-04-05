@@ -16,10 +16,29 @@ import { brickService } from '../../models/brickService';
 import { BrickImage } from '../BrickImage';
 import type { PrintViewProps } from './PrintView.types';
 
+const SITE_URL = 'https://bricks.tiogars.fr';
+
+function buildPdfFilename(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const date =
+    `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`;
+  const time =
+    `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  return `fr.tiogars.bricks-${date}-${time}`;
+}
+
 export function PrintView({ bricks, selectedTags, onClose }: PrintViewProps) {
   const sortedBricks = brickService.sortByNumber(bricks);
 
   const handlePrint = () => {
+    const previousTitle = document.title;
+    document.title = buildPdfFilename();
+    const restoreTitle = () => {
+      document.title = previousTitle;
+      window.removeEventListener('afterprint', restoreTitle);
+    };
+    window.addEventListener('afterprint', restoreTitle);
     window.print();
   };
 
@@ -74,6 +93,15 @@ export function PrintView({ bricks, selectedTags, onClose }: PrintViewProps) {
           )}
           <Typography variant="body2" color="text.secondary">
             Generated: {new Date().toLocaleString()}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            component="a"
+            href={SITE_URL}
+            sx={{ mt: 0.5, display: 'block', color: 'inherit', textDecoration: 'none' }}
+          >
+            {SITE_URL}
           </Typography>
         </Box>
 
