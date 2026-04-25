@@ -120,57 +120,45 @@ export function Home() {
       >
         <SpeedDialAction
           icon={<AddIcon />}
-          tooltipTitle="Add New Brick"
-          tooltipOpen
+          title="Add New Brick"
           onClick={() => setBrickFormModalOpen(true)}
-          FabProps={{
-            sx: {
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
-              },
+          sx={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
             },
           }}
         />
         <SpeedDialAction
           icon={<PrintIcon />}
-          tooltipTitle="Print"
-          tooltipOpen
+          title="Print"
           onClick={handlePrint}
-          FabProps={{
-            sx: {
-              background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
-              },
+          sx={{
+            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
             },
           }}
         />
         <SpeedDialAction
           icon={<ImportExportIcon />}
-          tooltipTitle="Import / Export"
-          tooltipOpen
+          title="Import / Export"
           onClick={() => setImportExportModalOpen(true)}
-          FabProps={{
-            sx: {
-              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
-              },
+          sx={{
+            background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
             },
           }}
         />
         <SpeedDialAction
           icon={<SettingsIcon />}
-          tooltipTitle="External Links Settings"
-          tooltipOpen
+          title="External Links Settings"
           onClick={() => setExternalLinksSettingsOpen(true)}
-          FabProps={{
-            sx: {
-              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
-              },
+          sx={{
+            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
             },
           }}
         />

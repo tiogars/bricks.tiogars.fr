@@ -171,7 +171,7 @@ export function BrickFormContent({ onSubmit, editingBrick, onCancel, existingTag
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             Brick Image (Optional)
           </Typography>
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
             <Button
               variant="outlined"
               component="label"
@@ -248,7 +248,7 @@ export function BrickFormContent({ onSubmit, editingBrick, onCancel, existingTag
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 Quick add:
               </Typography>
-              <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
                 {existingTags.map((tag) => (
                   <Chip
                     key={tag}
@@ -268,7 +268,7 @@ export function BrickFormContent({ onSubmit, editingBrick, onCancel, existingTag
               <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                 Selected tags:
               </Typography>
-              <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', gap: 0.5 }}>
                 {selectedTags.map((tag) => (
                   <Chip
                     key={tag}

@@ -35,7 +35,7 @@ export function TagFilter({ tags, selectedTags, onTagsChange }: TagFilterProps) 
         <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
           🏷️ Filter by Tags
         </Typography>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
           {selectedTags.length > 0 && (
             <Button
               size="small"
@@ -60,7 +60,7 @@ export function TagFilter({ tags, selectedTags, onTagsChange }: TagFilterProps) 
       </Box>
 
       <Box sx={{ mb: 2 }}>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
           {tags.map((tag) => (
             <Chip
               key={tag}

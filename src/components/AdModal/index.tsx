@@ -111,17 +111,14 @@ export function AdModal({ open, timestamp, onClose }: AdModalProps) {
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose}
-      maxWidth="sm"
-      fullWidth
-      disableEscapeKeyDown
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-        }
-      }}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          maxWidth="sm"
+          fullWidth
+          slotProps={{
+            paper: { sx: { borderRadius: 2 } }
+          }}
     >
       {open && <AdModalContent key={timestamp} onClose={onClose} />}
     </Dialog>

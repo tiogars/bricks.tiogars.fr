@@ -26,15 +26,13 @@ export function BrickFormModal({ open, onClose, onSubmit, editingBrick, onCancel
   };
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-        }
+      slotProps={{
+        paper: { sx: { borderRadius: 2 } }
       }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>

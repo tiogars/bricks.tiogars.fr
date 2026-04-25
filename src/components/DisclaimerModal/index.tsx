@@ -14,15 +14,13 @@ interface DisclaimerModalProps {
 
 export function DisclaimerModal({ open, onClose }: DisclaimerModalProps) {
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-        }
+      slotProps={{
+        paper: { sx: { borderRadius: 2 } }
       }}
     >
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1 }}>

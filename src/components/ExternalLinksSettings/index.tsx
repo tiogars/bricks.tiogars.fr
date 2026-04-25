@@ -122,7 +122,7 @@ export function ExternalLinksSettings({
                     edge="start"
                     checked={link.enabled}
                     onChange={() => onToggle(link.id)}
-                    inputProps={{ 'aria-label': `Enable ${link.name}` }}
+                    aria-label={`Enable ${link.name}`}
                   />
                   <ListItemText
                     primary={link.name}

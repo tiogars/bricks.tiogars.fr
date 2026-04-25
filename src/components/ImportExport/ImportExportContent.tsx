@@ -152,7 +152,7 @@ export function ImportExportContent({ bricks, externalLinks, onImport, onClearAl
         <Typography variant="h6" component="h3" gutterBottom sx={{ fontSize: '1rem', fontWeight: 600 }}>
           Export Your Data
         </Typography>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
           <Button
             variant="outlined"
             startIcon={isExporting ? <CircularProgress size={16} /> : <DownloadIcon />}
@@ -208,7 +208,7 @@ export function ImportExportContent({ bricks, externalLinks, onImport, onClearAl
             hidden
           />
         </Button>
-        <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
           Supports JSON, CSV, and XML formats
         </Typography>
       </Box>
